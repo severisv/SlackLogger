@@ -4,11 +4,11 @@ using Microsoft.Extensions.Logging;
 
 namespace SlackLogger
 {
-    internal class SlackLoggerSettings
+    internal class Settings
     {
         private readonly IConfiguration _configuration;
 
-        public SlackLoggerSettings(IConfiguration configuration)
+        public Settings(IConfiguration configuration)
         {
             _configuration = configuration;
         }

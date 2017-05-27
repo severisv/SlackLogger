@@ -1,12 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
 
 namespace SlackLogger
 {
-    public class SlackLogger : ILogger<Type>
+    public class Logger : ILogger<Type>
     {
         private readonly SlackLoggerOptions _options;
         private readonly string _environmentName;
@@ -14,12 +13,12 @@ namespace SlackLogger
         private readonly string _name;
         private readonly Func<string, LogLevel, bool> _filter;
 
-        public SlackLogger(string name, SlackLoggerOptions options, Func<string, LogLevel, bool> filter)
+        public Logger(string name, SlackLoggerOptions options, Func<string, LogLevel, bool> filter)
         {
             _name = name;
             _environmentName = options.Environment ?? "";
             _options = options;
-            _enabledLogLevels = GetEnabledLogLevels(_options.LogLevel ?? LogLevel.Warning);
+            _enabledLogLevels = GetEnabledLogLevels(_options.LogLevel);
             _filter = filter ?? ((category, logLevel) => true);
         }
 

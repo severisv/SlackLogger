@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
+﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace SlackLogger
@@ -12,7 +11,7 @@ namespace SlackLogger
             IConfiguration slackConfiguration = null,
             IConfiguration loggingConfiguration = null)
         {
-            loggerFactory.AddProvider(new SlackLoggerProvider(options, slackConfiguration, loggingConfiguration));
+            loggerFactory.AddProvider(new LoggerProvider(options, slackConfiguration, loggingConfiguration));
         }
     }
 }

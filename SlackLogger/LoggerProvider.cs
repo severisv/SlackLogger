@@ -6,29 +6,29 @@ using Microsoft.Extensions.Logging;
 
 namespace SlackLogger
 {
-    internal class SlackLoggerProvider : ILoggerProvider
+    internal class LoggerProvider : ILoggerProvider
     {
 
         private readonly SlackLoggerOptions _options;
-        private readonly SlackLoggerSettings _settings;
+        private readonly Settings _settings;
 
-        public SlackLoggerProvider(SlackLoggerOptions options, IConfiguration slackConfiguration, IConfiguration loggingConfiguration)
+        public LoggerProvider(SlackLoggerOptions options, IConfiguration slackConfiguration, IConfiguration loggingConfiguration)
         {
             _options = BuildOptions(options, slackConfiguration);
             if (loggingConfiguration != null)
             {
-                _settings = new SlackLoggerSettings(loggingConfiguration);
+                _settings = new Settings(loggingConfiguration);
             }
         }
 
         public ILogger CreateLogger(string name)
         {
             var filter = _settings != null ? GetFilter(name, _settings) : null;
-            return new SlackLogger(name, _options, filter);
+            return new Logger(name, _options, filter);
         }
 
 
-        private Func<string, LogLevel, bool> GetFilter(string name, SlackLoggerSettings settings)
+        private Func<string, LogLevel, bool> GetFilter(string name, Settings settings)
         {
             if (settings != null)
             {
