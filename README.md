@@ -69,7 +69,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, LoggerFa
 `appsettings.json`:
 ```json
 "SlackLogger": {
-    "WebhookUrl": "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj"
+    "WebhookUrl": "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj",
     "LogLevel": "Information",
     "NotificationLevel": "Error"      
 }
