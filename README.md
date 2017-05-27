@@ -3,8 +3,8 @@ A simple and configurable logger for ASP.NET Core projects that logs to Slack.
 
 SlackLogger will post formatted log messages at the desired level to a specified channel or person on Slack.
 
-
-
+![Example log message](/documentation/logexample.png)
+![Example log message](/documentation/exceptionexample.png)
 
 ## Usage
 
