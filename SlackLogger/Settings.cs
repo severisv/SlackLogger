@@ -1,20 +1,50 @@
 using System;
+using System.Collections.Generic;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
 namespace SlackLogger
 {
-    internal class Settings
+    internal class ScopeSettings
     {
         private readonly IConfiguration _configuration;
 
-        public Settings(IConfiguration configuration)
+        public ScopeSettings(IConfiguration configuration)
         {
             _configuration = configuration;
         }
 
 
-        public bool IncludeScopes
+        public Func<string, LogLevel, bool> GetFilter(string name)
+        {
+            foreach (var prefix in GetKeyPrefixes(name))
+            {
+                LogLevel level;
+                if (TryGetSwitch(prefix, out level))
+                {
+                    return (n, l) => l >= level;
+                }
+            }            
+            return (n, l) => false;
+        }
+
+        private IEnumerable<string> GetKeyPrefixes(string name)
+        {
+            while (!string.IsNullOrEmpty(name))
+            {
+                yield return name;
+                var lastIndexOfDot = name.LastIndexOf('.');
+                if (lastIndexOfDot == -1)
+                {
+                    yield return "Default";
+                    break;
+                }
+                name = name.Substring(0, lastIndexOfDot);
+            }
+        }
+
+
+        private bool IncludeScopes
         {
             get
             {
@@ -36,7 +66,7 @@ namespace SlackLogger
             }
         }
 
-        public bool TryGetSwitch(string name, out LogLevel level)
+        private bool TryGetSwitch(string name, out LogLevel level)
         {
             var switches = _configuration.GetSection("LogLevel");
             if (switches == null)
