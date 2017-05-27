@@ -16,7 +16,7 @@ namespace SlackLogger
         public Logger(string name, SlackLoggerOptions options, Func<string, LogLevel, bool> scopeFilter)
         {
             _name = name;
-            _environmentName = options.Environment ?? "";
+            _environmentName = options.EnvironmentName ?? "";
             _options = options;
             _enabledLogLevels = GetEnabledLogLevels(_options.LogLevel);
             _scopeFilter = scopeFilter ?? ((category, logLevel) => true);
@@ -65,7 +65,7 @@ namespace SlackLogger
             }
             else
             {
-                message = state + " Message: " + exception.Message;
+                message = state?.ToString();
             }
             return message;
         }

@@ -10,8 +10,8 @@ namespace SlackLogger
         public string Channel { get; set; }
         public string Application { get; }
         public string WebhookUrl { get; set; }
-        public string Environment { get; set; }
-        public Func<string, string> SanitizeOutput { get; set; }
+        public string EnvironmentName { get; set; }
+        public Func<string, string> SanitizeOutputFunction { get; set; }
         private LogLevel? _logLevel;
         public LogLevel LogLevel 
         {
@@ -44,7 +44,7 @@ namespace SlackLogger
                 }
                 if (configuration["Environment"] != null)
                 {
-                    Environment = configuration["Environment"];
+                    EnvironmentName = configuration["Environment"];
                 }
                 if (configuration["LogLevel"] != null)
                 {
