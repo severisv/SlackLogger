@@ -1,3 +1,3 @@
 dotnet restore .\SlackLogger
-dotnet pack .\SlackLogger\ /p:PackageVersion=1.0.%1 --configuration Release -o ../.deploy
-.\nuget.exe push .deploy\SlackLogger.1.0.%1.nupkg -ApiKey %2 -source %3
+dotnet pack .\SlackLogger\ /p:PackageVersion=%appveyor_build_version% --configuration Release -o ../.deploy
+.\nuget.exe push .deploy\SlackLogger.%appveyor_build_version%.nupkg -ApiKey %2 -source %3
