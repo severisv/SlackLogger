@@ -14,12 +14,12 @@ namespace SlackLogger
         private readonly string _name;
         private readonly Func<string, LogLevel, bool> _filter;
 
-        public SlackLogger(string name, SlackLoggerOptions options, IHostingEnvironment environment, Func<string, LogLevel, bool> filter)
+        public SlackLogger(string name, SlackLoggerOptions options, Func<string, LogLevel, bool> filter)
         {
             _name = name;
-            _environmentName = environment?.EnvironmentName ?? "";
+            _environmentName = options.Environment ?? "";
             _options = options;
-            _enabledLogLevels = GetEnabledLogLevels(_options.LogLevel);
+            _enabledLogLevels = GetEnabledLogLevels(_options.LogLevel ?? LogLevel.Warning);
             _filter = filter ?? ((category, logLevel) => true);
         }
 

@@ -10,10 +10,9 @@ namespace SlackLogger
         public static void AddSlack(this ILoggerFactory loggerFactory,
                 SlackLoggerOptions options,
             IConfiguration slackConfiguration = null,
-            IConfiguration loggingConfiguration = null,
-            IHostingEnvironment environment = null)
+            IConfiguration loggingConfiguration = null)
         {
-            loggerFactory.AddProvider(new SlackLoggerProvider(options, slackConfiguration, loggingConfiguration, environment));
+            loggerFactory.AddProvider(new SlackLoggerProvider(options, slackConfiguration, loggingConfiguration));
         }
     }
 }

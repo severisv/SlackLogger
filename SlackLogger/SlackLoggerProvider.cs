@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 
@@ -11,13 +10,11 @@ namespace SlackLogger
     {
 
         private readonly SlackLoggerOptions _options;
-        private readonly IHostingEnvironment _environment;
         private readonly SlackLoggerSettings _settings;
 
-        public SlackLoggerProvider(SlackLoggerOptions options, IConfiguration slackConfiguration, IConfiguration loggingConfiguration, IHostingEnvironment environment)
+        public SlackLoggerProvider(SlackLoggerOptions options, IConfiguration slackConfiguration, IConfiguration loggingConfiguration)
         {
             _options = BuildOptions(options, slackConfiguration);
-            _environment = environment;
             if (loggingConfiguration != null)
             {
                 _settings = new SlackLoggerSettings(loggingConfiguration);
@@ -27,7 +24,7 @@ namespace SlackLogger
         public ILogger CreateLogger(string name)
         {
             var filter = _settings != null ? GetFilter(name, _settings) : null;
-            return new global::SlackLogger.SlackLogger(name, _options, _environment, filter);
+            return new SlackLogger(name, _options, filter);
         }
 
 
@@ -75,6 +72,10 @@ namespace SlackLogger
                 {
                     result.WebhookUrl = configuration["WebhookUrl"];
                 }
+                if (configuration["Environment"] != null)
+                {
+                    result.Environment = configuration["Environment"];
+                }
                 if (configuration["LogLevel"] != null)
                 {
                     result.LogLevel = ParseLogLevel(configuration, "LogLevel");
@@ -114,7 +115,7 @@ namespace SlackLogger
             catch (Exception e)
             {
                 throw new Exception(
-                    $"Can't map the config value {key} to any LogLevel. Allowed values [{string.Join(", ", Enum.GetValues(typeof(LogLevel)).Cast<LogLevel>())}]");
+                    $"Can't map the config value {key} to a LogLevel. Allowed values [{string.Join(", ", Enum.GetValues(typeof(LogLevel)).Cast<LogLevel>())}]", e);
             }
         }
 

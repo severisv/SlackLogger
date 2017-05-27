@@ -8,13 +8,14 @@ namespace SlackLogger
         public string Channel { get; set; }
         public string Application { get; }
         public string WebhookUrl { get; set; }
-        public LogLevel LogLevel { get; set; }
+        public LogLevel? LogLevel { get; set; }
+        public string Environment { get; set; }
         public Func<string, string> SanitizeOutput { get; set; }
 
         private LogLevel? _notificationLevel;
         public LogLevel NotificationLevel
         {
-            get => _notificationLevel ?? LogLevel.Error;
+            get => _notificationLevel ?? Microsoft.Extensions.Logging.LogLevel.Error;
             set => _notificationLevel = value;
         }
 
