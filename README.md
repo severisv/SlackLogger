@@ -1,7 +1,7 @@
 # SlackLogger
 A simple and configurable logger for ASP.NET Core projects that logs to Slack.
 
-SlackLogger will post formatted log messages at the desired level to a specified channel or person on Slack.
+SlackLogger will post formatted log messages at the desired level to a specified channel or person.
 
 ![Example log message](/documentation/logexample.png)
 ![Example log message](/documentation/exceptionexample.png)
@@ -12,7 +12,7 @@ SlackLogger will post formatted log messages at the desired level to a specified
 public void Configure(IApplicationBuilder app, IHostingEnvironment env, LoggerFactory loggerFactory)
 {
     loggerFactory.AddSlack(new SlackLoggerOptions("ApplicationName") {
-            WebhookUrl = "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj"                 
+            WebhookUrl = "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj"
     });
     ...
 }
@@ -34,21 +34,21 @@ loggerFactory.AddSlack(new SlackLoggerOptions("ApplicationName") {
 });
 ```
 
-`Channel`  
+`Channel`
 Overrides the channel or person that is configured in the Slack webhook.
 
-`LogLevel`  
+`LogLevel`
 Sets the minimum log level used. Defaults to `Warning`.
 
-`NotificationLevel`  
+`NotificationLevel`
 Sets the minimum log level that causes notifications on Slack (using @channel). Defaults to `Error`.
 
-`EnvironmentName`  
+`EnvironmentName`
 Prints the name of the current hosting environment in each log statement, if set.
 
-`SanitizeOutputFunction`  
-Can be used to modify the messages (including stack traces) before they are logged. Used if one is concerned that certain details are too sensitive to be posted to Slack.  
-  
+`SanitizeOutputFunction`
+Can be used to modify the messages (including stack traces) before they are logged. Used if one is concerned that certain details are too sensitive to be posted to Slack.
+
 
 ## Configure using ConfigurationProvider
 SlackLogger can be completely or partially configured using a configuration provider:
@@ -71,7 +71,7 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, LoggerFa
 "SlackLogger": {
     "WebhookUrl": "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj",
     "LogLevel": "Information",
-    "NotificationLevel": "Error"      
+    "NotificationLevel": "Error"
 }
 ```
 
