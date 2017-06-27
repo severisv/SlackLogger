@@ -19,15 +19,13 @@ namespace SlackLogger
         }
 
 
-        public void Log(LogLevel logLevel, string typeName, string message,string environmentName,
-            Exception exception = null)
+        public void Log(LogLevel logLevel, string typeName, string message,string environmentName, Exception exception = null)
         {
             Post(typeName, message, exception, environmentName, logLevel);
         }
 
 
-        private void Post(string typeName, string message, Exception exception, string environment,
-            LogLevel logLevel)
+        private void Post(string typeName, string message, Exception exception, string environment, LogLevel logLevel)
         {
             var icon = GetIcon(logLevel);
             var color = GetColor(logLevel);
@@ -35,6 +33,7 @@ namespace SlackLogger
 
             var exceptionMessage = exception?.Message;
             var stackTrace = exception?.StackTrace;
+
             if (_options.SanitizeOutputFunction != null && exception != null)
             {
                 exceptionMessage = _options.SanitizeOutputFunction(exceptionMessage);
@@ -46,7 +45,7 @@ namespace SlackLogger
                     ? $"```{exceptionMessage} \n{stackTrace.Truncate(1900)}```"
                     : string.Empty;
 
-
+            
             var notification = ShouldNotify(logLevel) ? "<!channel>: \n" : "";
 
             using (var client = new HttpClient())
@@ -74,7 +73,7 @@ namespace SlackLogger
                                 new
                                 {
                                     title = $"{icon} [{logLevel}]",
-                                    value = $"{message}",
+                                    value = $"{message.Sanitize(_options)}",
                                 },
                                 new
                                 {
@@ -146,5 +145,20 @@ namespace SlackLogger
             }
             return result;
         }
+
+
+       
+      
     }
+
+    internal static class StringExtensions
+    {
+        public static string Sanitize(this string input, SlackLoggerOptions options)
+            =>
+                options.SanitizeOutputFunction != null ? 
+                    options.SanitizeOutputFunction(input) : 
+                    input;
+        
+    }
+
 }
