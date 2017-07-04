@@ -94,7 +94,7 @@ namespace SlackLogger
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Feil ved posting til Slack", e);
+                    throw new Exception("Error posting til Slack", e);
                 }
             }
         }
