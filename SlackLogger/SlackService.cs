@@ -53,14 +53,14 @@ namespace SlackLogger
                 var payload = new
                 {
                     channel = _options.Channel,
-                    username = _options.Application,
+                    username = _options.ApplicationName,
                     icon_emoji = icon,
-                    text = $"{notification}*{_options.Application}* {environmentName}",
+                    text = $"{notification}*{_options.ApplicationName}* {environmentName}",
                     attachments = new[]
                     {
                         new
                         {
-                            fallback = $"Error in {_options.Application}",
+                            fallback = $"Error in {_options.ApplicationName}",
                             color = color,
                             mrkdwn_in = new[] {"fields"},
                             fields = new[]

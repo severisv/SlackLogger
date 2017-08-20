@@ -10,14 +10,21 @@ SlackLogger will post formatted log messages at the desired level to a specified
 
 ## Usage
 
+`Program.cs`
 ```cs
-public void Configure(IApplicationBuilder app, IHostingEnvironment env, LoggerFactory loggerFactory)
-{
-    loggerFactory.AddSlack(new SlackLoggerOptions("ApplicationName") {
-            WebhookUrl = "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj"
-    });
-    ...
-}
+  public static IWebHost BuildWebHost(string[] args) =>
+            WebHost.CreateDefaultBuilder(args)
+                .ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddSlack(options =>
+                    {
+                        options.WebhookUrl = "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj";
+                    });
+
+                })
+                .UseStartup<Startup>()
+                .Build();
 ```
 
 ## Configuration
@@ -25,15 +32,18 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, LoggerFa
 The logger has a number of optional settings:
 
 ```cs
-loggerFactory.AddSlack(new SlackLoggerOptions("ApplicationName") {
-        WebhookUrl = "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj",
-        LogLevel = LogLevel.Information,
-        NotificationLevel = LogLevel.None,
-        Environment = env.EnvironmentName,
-        Channel = "#mychannel",
-        SanitizeOutputFunction = output => Regex.Replace(output, "@[^\\.@-]", "")
 
+
+logging.AddSlack(options =>
+{
+     options.WebhookUrl = "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj";
+     options.LogLevel = LogLevel.Information;
+     options.NotificationLevel = LogLevel.None;
+     options.Environment = env.EnvironmentName;
+     options.Channel = "#mychannel";
+     options.SanitizeOutputFunction = output => Regex.Replace(output, "@[^\\.@-]", "");
 });
+            
 ```
 
 `Channel`
@@ -45,8 +55,11 @@ Sets the minimum log level used. Defaults to `Warning`.
 `NotificationLevel`
 Sets the minimum log level that causes notifications on Slack (using @channel). Defaults to `Error`.
 
+`ApplicationName`
+Prints the name of the current hosting environment in each log statement, if set. Defaults to the `ApplicationName` of `IHostingEnvironment`.
+
 `EnvironmentName`
-Prints the name of the current hosting environment in each log statement, if set.
+Prints the name of the current hosting environment in each log statement, if set. Defaults to the name of `IHostingEnvironment`.
 
 `SanitizeOutputFunction`
 Can be used to modify the messages (including stack traces) before they are logged. Used if one is concerned that certain details are too sensitive to be posted to Slack.
@@ -56,25 +69,24 @@ Can be used to modify the messages (including stack traces) before they are logg
 SlackLogger can be completely or partially configured using a configuration provider:
 
 ```cs
-public IConfigurationRoot Configuration { get; set; }
 
-public void Configure(IApplicationBuilder app, IHostingEnvironment env, LoggerFactory loggerFactory)
-{
-    loggerFactory.AddSlack(
-        new SlackLoggerOptions("ApplicationName"),
-        Configuration.GetSection("SlackLogger")
-    );
-    ...
-}
+.ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddSlack();
+                })
+
 ```
 
 `appsettings.json`:
 ```json
-"SlackLogger": {
+"Logging": {
+    "Slack": {
     "WebhookUrl": "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj",
     "LogLevel": "Information",
     "NotificationLevel": "Error"
+    }
 }
+
 ```
 
 If the same property is set both in code and in the configuration provider, the value from the configuration provider is used.
@@ -85,15 +97,15 @@ The logger filters log statements from different part of the code using namespac
 ```cs
 public IConfigurationRoot Configuration { get; set; }
 
-public void Configure(IApplicationBuilder app, IHostingEnvironment env, LoggerFactory loggerFactory)
-{
-    loggerFactory.AddSlack(
-        new SlackLoggerOptions("ApplicationName"),
-        Configuration.GetSection("SlackLogger"),
-        Configuration.GetSection("Logging"),
-    );
-    ...
-}
+
+.ConfigureLogging((hostingContext, logging) =>
+                {
+                    logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
+                    logging.AddSlack();
+                })
+
+
+
 ```
 
 `appsettings.json`:
@@ -104,9 +116,10 @@ public void Configure(IApplicationBuilder app, IHostingEnvironment env, LoggerFa
         "Default": "Debug",
         "System": "Information",
         "Microsoft": "Warning"
+    },
+    "Slack": {
+        "WebhookUrl": "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj"
     }
 },
-"SlackLogger": {
-    "WebhookUrl": "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj"
-}
+
 ```

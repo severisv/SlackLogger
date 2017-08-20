@@ -1,17 +1,19 @@
 using System;
 using System.Collections.Generic;
-using Microsoft.Extensions.Configuration;
+using System.Linq;
 using Microsoft.Extensions.Logging;
 
 namespace SlackLogger
 {
     internal class ScopeSettings
     {
-        private readonly IConfiguration _configuration;
+        private readonly LoggerFilterOptions _configuration;
+        private readonly bool _includeScopes;
 
-        public ScopeSettings(IConfiguration configuration)
+        public ScopeSettings(LoggerFilterOptions configuration, bool includeScopes)
         {
-            _configuration = configuration;
+            _configuration = configuration ?? new LoggerFilterOptions();
+            _includeScopes = includeScopes;
         }
 
 
@@ -42,54 +44,27 @@ namespace SlackLogger
                 name = name.Substring(0, lastIndexOfDot);
             }
         }
-
-
-        private bool IncludeScopes
-        {
-            get
-            {
-                bool includeScopes;
-                var value = _configuration["IncludeScopes"];
-                if (string.IsNullOrEmpty(value))
-                {
-                    return false;
-                }
-                else if (bool.TryParse(value, out includeScopes))
-                {
-                    return includeScopes;
-                }
-                else
-                {
-                    var message = $"Configuration value '{value}' for setting '{nameof(IncludeScopes)}' is not supported.";
-                    throw new InvalidOperationException(message);
-                }
-            }
-        }
+  
 
         private bool TryGetSwitch(string name, out LogLevel level)
         {
-            var switches = _configuration.GetSection("LogLevel");
-            if (switches == null)
+            
+            var switches = _configuration.Rules.Where(r => r.CategoryName == name).ToList();
+            if (!switches.Any())
             {
                 level = LogLevel.None;
                 return false;
             }
 
-            var value = switches[name];
-            if (string.IsNullOrEmpty(value))
+            var value = switches.First().LogLevel;
+            if (value == null)
             {
                 level = LogLevel.None;
                 return false;
             }
-            else if (Enum.TryParse<LogLevel>(value, out level))
-            {
-                return true;
-            }
-            else
-            {
-                var message = $"Configuration value '{value}' for category '{name}' is not supported.";
-                throw new InvalidOperationException(message);
-            }
+            level = value.Value;
+            return true;
+            
         }
     }
 }

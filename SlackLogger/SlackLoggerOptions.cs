@@ -8,7 +8,7 @@ namespace SlackLogger
     public class SlackLoggerOptions
     {
         public string Channel { get; set; }
-        public string Application { get; }
+        public string ApplicationName { get; set; }
         public string WebhookUrl { get; set; }
         public string EnvironmentName { get; set; }
         public Func<string, string> SanitizeOutputFunction { get; set; }
@@ -25,15 +25,14 @@ namespace SlackLogger
             set => _notificationLevel = value;
         }
 
-        public SlackLoggerOptions(string applicationName)
-        {
-            Application = applicationName;
-        }
-
         public void Merge(IConfiguration configuration)
         {
             if (configuration != null)
             {
+                if (configuration["ApplicationName"] != null)
+                {
+                    ApplicationName = configuration["ApplicationName"];
+                }
                 if (configuration["Channel"] != null)
                 {
                     Channel = configuration["Channel"];
@@ -55,10 +54,22 @@ namespace SlackLogger
                     NotificationLevel = ParseLogLevel(configuration, "NotificationLevel");
                 }
             }
-            ValidateWebookUrl();
         }
 
-        private void ValidateWebookUrl()
+        private static LogLevel ParseLogLevel(IConfiguration config, string key)
+        {
+            try
+            {
+                return (LogLevel)Enum.Parse(typeof(LogLevel), config[key]);
+            }
+            catch (Exception e)
+            {
+                throw new Exception(
+                    $"Can't map the config value {key} to a LogLevel. Allowed values [{string.Join(", ", Enum.GetValues(typeof(LogLevel)).Cast<LogLevel>())}]", e);
+            }
+        }
+
+        public void ValidateWebookUrl()
         {
             if (string.IsNullOrWhiteSpace(WebhookUrl))
             {
@@ -71,19 +82,6 @@ namespace SlackLogger
                 throw new ArgumentException($"Invalid WebhookUrl: {WebhookUrl}");
             }
 
-        }
-
-        private static LogLevel ParseLogLevel(IConfiguration config, string key)
-        {
-            try
-            {
-                return (LogLevel) Enum.Parse(typeof(LogLevel), config[key]);
-            }
-            catch (Exception e)
-            {
-                throw new Exception(
-                    $"Can't map the config value {key} to a LogLevel. Allowed values [{string.Join(", ", Enum.GetValues(typeof(LogLevel)).Cast<LogLevel>())}]", e);
-            }
         }
     }
 }

@@ -1,5 +1,8 @@
+using System;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Options;
 
 namespace SlackLogger
 {
@@ -9,14 +12,22 @@ namespace SlackLogger
         private readonly SlackLoggerOptions _options;
         private readonly ScopeSettings _scopeSettings;
 
-        public LoggerProvider(SlackLoggerOptions options, IConfiguration slackConfiguration, IConfiguration loggingConfiguration)
+        public LoggerProvider(IOptions<LoggerFilterOptions> filterOptions, IOptions<SlackLoggerOptions> options, IConfiguration configuration, IHostingEnvironment env)
         {
-            _options = options;
-            _options.Merge(slackConfiguration);
-            if (loggingConfiguration != null)
-            {
-                _scopeSettings = new ScopeSettings(loggingConfiguration);
-            }
+            _options = options.Value;
+            _options.Merge(configuration.GetSection("Logging:Slack"));
+            
+            _options.EnvironmentName = env?.EnvironmentName;
+            _options.ApplicationName = !string.IsNullOrEmpty(_options.ApplicationName)
+                ? _options.ApplicationName
+                : env?.ApplicationName;
+
+            _options.ValidateWebookUrl();
+
+            bool includeScopes;
+            bool.TryParse(configuration.GetSection("Logging")["IncludeScopes"], out includeScopes);
+       
+            _scopeSettings = new ScopeSettings(filterOptions.Value, includeScopes: includeScopes);
         }
 
         public ILogger CreateLogger(string name)
