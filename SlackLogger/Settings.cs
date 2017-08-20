@@ -8,12 +8,10 @@ namespace SlackLogger
     internal class ScopeSettings
     {
         private readonly LoggerFilterOptions _configuration;
-        private readonly bool _includeScopes;
 
-        public ScopeSettings(LoggerFilterOptions configuration, bool includeScopes)
+        public ScopeSettings(LoggerFilterOptions configuration)
         {
             _configuration = configuration ?? new LoggerFilterOptions();
-            _includeScopes = includeScopes;
         }
 
 
@@ -27,7 +25,7 @@ namespace SlackLogger
                     return (n, l) => l >= level;
                 }
             }            
-            return (n, l) => false;
+            return (n, l) => true;
         }
 
         private IEnumerable<string> GetKeyPrefixes(string name)
@@ -48,15 +46,20 @@ namespace SlackLogger
 
         private bool TryGetSwitch(string name, out LogLevel level)
         {
-            
-            var switches = _configuration.Rules.Where(r => r.CategoryName == name).ToList();
+            if (name == "Default")
+            {
+                level = _configuration.Rules?.FirstOrDefault(r => r.CategoryName == null)?.LogLevel ?? LogLevel.Information;
+                return true;
+            }
+
+            var switches = _configuration.Rules;
             if (!switches.Any())
             {
                 level = LogLevel.None;
                 return false;
             }
 
-            var value = switches.First().LogLevel;
+            var value = switches.FirstOrDefault(s => s.CategoryName == name)?.LogLevel;
             if (value == null)
             {
                 level = LogLevel.None;
@@ -65,6 +68,7 @@ namespace SlackLogger
             level = value.Value;
             return true;
             
+
         }
     }
 }

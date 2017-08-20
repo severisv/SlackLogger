@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 
 namespace SlackLogger.Web._2
 {
@@ -27,6 +28,8 @@ namespace SlackLogger.Web._2
 
             app.Run(async (context) =>
             {
+                var logger = context.RequestServices.GetService<ILogger<Startup>>();
+                logger.LogWarning("Warning");
                 await context.Response.WriteAsync("Hello World!");
             });
         }

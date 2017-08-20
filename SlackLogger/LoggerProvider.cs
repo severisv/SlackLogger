@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
@@ -24,10 +25,12 @@ namespace SlackLogger
 
             _options.ValidateWebookUrl();
 
-            bool includeScopes;
-            bool.TryParse(configuration.GetSection("Logging")["IncludeScopes"], out includeScopes);
-       
-            _scopeSettings = new ScopeSettings(filterOptions.Value, includeScopes: includeScopes);
+            var filterSettings = filterOptions.Value;
+            if (!filterSettings.Rules.Any())
+            {
+                filterSettings.Rules.Add(new LoggerFilterRule(null, null, LogLevel.Information, null));
+            }
+            _scopeSettings = new ScopeSettings(filterSettings);
         }
 
         public ILogger CreateLogger(string name)
