@@ -9,6 +9,9 @@ SlackLogger will post formatted log messages at the desired level to a specified
 ![Example log message](/documentation/exceptionexample.png)
 
 ## Usage
+Works with ASP.NET Core >= `2.0`. Reference package `SlackLogger` >= `2.0`. 
+
+To use with ASP.NET Core 1.0 reference SlackLogger version < `2.0` ([docs here](https://github.com/severisv/SlackLogger/tree/f00cabfddaec673e35201f9ebeff6b5dd927972a))
 
 `Program.cs`
 ```cs
