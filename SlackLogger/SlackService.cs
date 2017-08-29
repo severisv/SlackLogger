@@ -31,18 +31,16 @@ namespace SlackLogger
             var color = GetColor(logLevel);
             var environmentName = string.IsNullOrEmpty(environment) ? "" : $"({environment})";
 
-            var exceptionMessage = exception?.Message;
-            var stackTrace = exception?.StackTrace;
+            var stackTrace = exception?.ToString();
 
             if (_options.SanitizeOutputFunction != null && exception != null)
             {
-                exceptionMessage = _options.SanitizeOutputFunction(exceptionMessage);
                 stackTrace = _options.SanitizeOutputFunction(stackTrace);
             }
 
             var formattedStacktrace =
                 exception != null
-                    ? $"```{exceptionMessage} \n{stackTrace.Truncate(1900)}```"
+                    ? $"```\n{stackTrace.Truncate(1800)}```"
                     : string.Empty;
 
             

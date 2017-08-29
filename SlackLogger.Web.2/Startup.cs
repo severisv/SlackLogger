@@ -28,6 +28,15 @@ namespace SlackLogger.Web._2
 
             app.Run(async (context) =>
             {
+                try
+                {
+                    throw new Exception("Innerexception");
+                }
+                catch (Exception e)
+                {
+                    throw new Exception("Outerexception", e);
+                }
+
                 var logger = context.RequestServices.GetService<ILogger<Startup>>();
                 logger.LogWarning("Warning");
                 await context.Response.WriteAsync("Hello World!");
