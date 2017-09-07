@@ -51,7 +51,7 @@ namespace SlackLogger
                 var payload = new
                 {
                     channel = _options.Channel,
-                    username = _options.ApplicationName,
+                    username = "SlackLogger",
                     icon_emoji = icon,
                     text = $"{notification}*{_options.ApplicationName}* {environmentName}",
                     attachments = new[]
