@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using SlackLogger.Extensions;
@@ -19,13 +20,13 @@ namespace SlackLogger
         }
 
 
-        public void Log(LogLevel logLevel, string typeName, string message,string environmentName, Exception exception = null)
+        public void Log(LogLevel logLevel, string typeName, string message, string environmentName, Exception exception = null)
         {
-            Post(typeName, message, exception, environmentName, logLevel);
+            PostAsync(typeName, message, exception, environmentName, logLevel);
         }
 
 
-        private void Post(string typeName, string message, Exception exception, string environment, LogLevel logLevel)
+        private async void PostAsync(string typeName, string message, Exception exception, string environment, LogLevel logLevel)
         {
             var icon = GetIcon(logLevel);
             var color = GetColor(logLevel);
@@ -43,7 +44,7 @@ namespace SlackLogger
                     ? $"```\n{stackTrace.Truncate(1800)}```"
                     : string.Empty;
 
-            
+
             var notification = ShouldNotify(logLevel) ? "<!channel>: \n" : "";
 
             using (var client = new HttpClient())
@@ -86,16 +87,13 @@ namespace SlackLogger
                 var url = _options.WebhookUrl;
                 var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8,
                     "application/json");
-                try
-                {
-                    client.PostAsync(url, content).GetAwaiter().GetResult();
-                }
-                catch (Exception e)
-                {
-                    throw new Exception("Error posting til Slack", e);
-                }
+
+                await client.PostAsync(url, content);
+
             }
         }
+
+
 
         private string GetIcon(LogLevel logLevel)
         {
@@ -137,26 +135,26 @@ namespace SlackLogger
         private IEnumerable<LogLevel> GetNotificationLogLevels()
         {
             var result = new List<LogLevel>();
-            for (int i = (int) _options.NotificationLevel; i < (int) LogLevel.None; i++)
+            for (int i = (int)_options.NotificationLevel; i < (int)LogLevel.None; i++)
             {
-                result.Add((LogLevel) i);
+                result.Add((LogLevel)i);
             }
             return result;
         }
 
 
-       
-      
+
+
     }
 
     internal static class StringExtensions
     {
         public static string Sanitize(this string input, SlackLoggerOptions options)
             =>
-                options.SanitizeOutputFunction != null ? 
-                    options.SanitizeOutputFunction(input) : 
+                options.SanitizeOutputFunction != null ?
+                    options.SanitizeOutputFunction(input) :
                     input;
-        
+
     }
 
 }
