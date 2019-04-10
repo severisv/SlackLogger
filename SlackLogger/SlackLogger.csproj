@@ -10,11 +10,9 @@
     <ProjectUrl>https://github.com/severisv/slacklogger</ProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" />
-    <PackageReference Include="Newtonsoft.Json">
-      <Version>10.0.1</Version>
-    </PackageReference>
+    <PackageReference Include="Microsoft.AspNetCore.Hosting.Abstractions" Version="2.0.0" allowedVersions="[2.0,2.2]" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.0.0" allowedVersions="[2.0,2.2]" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" allowedVersions="[2.0,2.2]" />
+    <PackageReference Include="Newtonsoft.Json" Version="10.0.1" allowedVersions="[10,12]" />
   </ItemGroup>
 </Project>
