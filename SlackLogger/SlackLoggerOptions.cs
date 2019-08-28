@@ -8,6 +8,12 @@ namespace SlackLogger
     public class SlackLoggerOptions
     {
         public string Channel { get; set; }
+        public string ChannelCritical { get; set; }
+        public string ChannelError { get; set; }
+        public string ChannelWarning { get; set; }
+        public string ChannelInformation { get; set; }
+        public string ChannelDebug { get; set; }
+        public string ChannelTrace { get; set; }
         public string ApplicationName { get; set; }
         public string WebhookUrl { get; set; }
         public string EnvironmentName { get; set; }
@@ -36,6 +42,30 @@ namespace SlackLogger
                 if (configuration["Channel"] != null)
                 {
                     Channel = configuration["Channel"];
+                }
+                if (configuration["ChannelCritical"] != null)
+                {
+                    ChannelCritical = configuration["ChannelCritical"];
+                }
+                if (configuration["ChannelError"] != null)
+                {
+                    ChannelError = configuration["ChannelError"];
+                }
+                if (configuration["ChannelWarning"] != null)
+                {
+                    ChannelWarning = configuration["ChannelWarning"];
+                }
+                if (configuration["ChannelInformation"] != null)
+                {
+                    ChannelInformation = configuration["ChannelInformation"];
+                }
+                if (configuration["ChannelDebug"] != null)
+                {
+                    ChannelDebug = configuration["ChannelDebug"];
+                }
+                if (configuration["ChannelTrace"] != null)
+                {
+                    ChannelTrace = configuration["ChannelTrace"];
                 }
                 if (configuration["WebhookUrl"] != null)
                 {
