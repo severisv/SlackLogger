@@ -51,7 +51,7 @@ namespace SlackLogger
             {
                 var payload = new
                 {
-                    channel = _options.Channel,
+                    channel = GetChannel(logLevel),
                     username = "SlackLogger",
                     icon_emoji = icon,
                     text = $"{notification}*{_options.ApplicationName}* {environmentName}",
@@ -93,7 +93,25 @@ namespace SlackLogger
             }
         }
 
-
+        private string GetChannel(LogLevel logLevel)
+        {
+            switch (logLevel)
+            {
+                case LogLevel.Critical:
+                    return _options.ChannelCritical ?? _options.Channel;
+                case LogLevel.Error:
+                    return _options.ChannelError ?? _options.Channel;
+                case LogLevel.Warning:
+                    return _options.ChannelWarning ?? _options.Channel;
+                case LogLevel.Information:
+                    return _options.ChannelInformation ?? _options.Channel;
+                case LogLevel.Debug:
+                    return _options.ChannelDebug ?? _options.Channel;
+                case LogLevel.Trace:
+                    return _options.ChannelTrace ?? _options.Channel;
+                default: return "";
+            }
+        }
 
         private string GetIcon(LogLevel logLevel)
         {

@@ -44,6 +44,7 @@ logging.AddSlack(options =>
      options.NotificationLevel = LogLevel.None;
      options.Environment = env.EnvironmentName;
      options.Channel = "#mychannel";
+     options.ChannelCritical = "#mychannel-critical";
      options.SanitizeOutputFunction = output => Regex.Replace(output, "@[^\\.@-]", "");
 });
             
@@ -51,6 +52,9 @@ logging.AddSlack(options =>
 
 `Channel`
 Overrides the channel or person that is configured in the Slack webhook.
+
+`ChannelCritical`, `ChannelError`, `ChannelWarning`, `ChannelInformation`, `ChannelDebug`, `ChannelTrace`
+Overrides the `Channel` setting for the specified log level. If any of these are unset, it will fall back to the `Channel` value.
 
 `LogLevel`
 Sets the minimum log level used. Defaults to `Warning`.
