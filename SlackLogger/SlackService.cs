@@ -22,11 +22,11 @@ namespace SlackLogger
 
         public void Log(LogLevel logLevel, string typeName, string message, string environmentName, Exception exception = null)
         {
-            PostAsync(typeName, message, exception, environmentName, logLevel);
+            _ = Task.Run(() => PostAsync(typeName, message, exception, environmentName, logLevel));
         }
 
 
-        private async void PostAsync(string typeName, string message, Exception exception, string environment, LogLevel logLevel)
+        private async Task PostAsync(string typeName, string message, Exception exception, string environment, LogLevel logLevel)
         {
             var icon = GetIcon(logLevel);
             var color = GetColor(logLevel);
@@ -88,7 +88,7 @@ namespace SlackLogger
                 var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8,
                     "application/json");
 
-                await client.PostAsync(url, content);
+                await client.PostAsync(url, content).ConfigureAwait(false);
 
             }
         }
