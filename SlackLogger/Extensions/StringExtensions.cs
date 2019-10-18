@@ -6,7 +6,7 @@
         {
             if (str?.Length > maxLength)
             {
-                return str?.Substring(0, 1900) + "...";
+                return str.Substring(0, maxLength) + "...";
             }
             return str;
         }

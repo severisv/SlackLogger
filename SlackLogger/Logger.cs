@@ -29,7 +29,6 @@ namespace SlackLogger
             Exception exception,
             Func<TState, Exception, string> formatter)
         {
-
             try
             {
                 if (!IsEnabled(logLevel))
@@ -70,7 +69,6 @@ namespace SlackLogger
             return message;
         }
 
-
         public bool IsEnabled(LogLevel logLevel)
         {
             var passesFilter = _scopeFilter(_name, logLevel);
@@ -100,8 +98,5 @@ namespace SlackLogger
             {
             }
         }
-
-
-
     }
 }
