@@ -52,7 +52,7 @@ namespace SlackLogger
                 var payload = new
                 {
                     channel = GetChannel(logLevel),
-                    username = "SlackLogger",
+                    username = _options.UserName,
                     icon_emoji = icon,
                     text = $"{notification}*{_options.ApplicationName}* {environmentName}",
                     attachments = new[]
@@ -89,7 +89,6 @@ namespace SlackLogger
                     "application/json");
 
                 await client.PostAsync(url, content).ConfigureAwait(false);
-
             }
         }
 
@@ -159,10 +158,6 @@ namespace SlackLogger
             }
             return result;
         }
-
-
-
-
     }
 
     internal static class StringExtensions
@@ -174,5 +169,4 @@ namespace SlackLogger
                     input;
 
     }
-
 }

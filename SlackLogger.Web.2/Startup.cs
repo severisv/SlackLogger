@@ -1,7 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -26,8 +23,11 @@ namespace SlackLogger.Web._2
                 app.UseDeveloperExceptionPage();
             }
 
-            app.Run(async (context) =>
+            app.Run(async context =>
             {
+                if (context.Request.Path.Value.Contains("favicon.ico"))
+                    return;
+
                 try
                 {
                     throw new Exception("Innerexception");

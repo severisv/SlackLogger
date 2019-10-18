@@ -46,6 +46,7 @@ logging.AddSlack(options =>
      options.Channel = "#mychannel";
      options.ChannelCritical = "#mychannel-critical";
      options.SanitizeOutputFunction = output => Regex.Replace(output, "@[^\\.@-]", "");
+     options.UserName = "SlackLogger";
 });
             
 ```
@@ -70,6 +71,9 @@ Prints the name of the current hosting environment in each log statement, if set
 
 `SanitizeOutputFunction`
 Can be used to modify the messages (including stack traces) before they are logged. Used if one is concerned that certain details are too sensitive to be posted to Slack.
+
+`UserName`
+Sets the username sent to Slack. Defaults to `SlackLogger`. Set it to null, if you want to use the default webhook username.
 
 
 ## Configure using ConfigurationProvider

@@ -15,6 +15,7 @@ namespace SlackLogger
         public string ChannelDebug { get; set; }
         public string ChannelTrace { get; set; }
         public string ApplicationName { get; set; }
+        public string UserName { get; set; } = "SlackLogger";
         public string WebhookUrl { get; set; }
         public string EnvironmentName { get; set; }
         public Func<string, string> SanitizeOutputFunction { get; set; }
@@ -38,6 +39,10 @@ namespace SlackLogger
                 if (configuration["ApplicationName"] != null)
                 {
                     ApplicationName = configuration["ApplicationName"];
+                }
+                if (configuration["UserName"] != null)
+                {
+                    UserName = configuration["UserName"];
                 }
                 if (configuration["Channel"] != null)
                 {
@@ -111,7 +116,6 @@ namespace SlackLogger
             {
                 throw new ArgumentException($"Invalid WebhookUrl: {WebhookUrl}");
             }
-
         }
     }
 }
