@@ -30,6 +30,7 @@ namespace SlackLogger
         {
             var icon = GetIcon(logLevel);
             var color = GetColor(logLevel);
+            var applicationName = string.IsNullOrEmpty(_options.ApplicationName) ? "" : $"*{_options.ApplicationName}*";
             var environmentName = string.IsNullOrEmpty(environment) ? "" : $"({environment})";
 
             var stackTrace = exception?.ToString();
@@ -44,9 +45,8 @@ namespace SlackLogger
                     ? $"```\n{stackTrace.Truncate(1800)}```"
                     : string.Empty;
 
-
             var notification = ShouldNotify(logLevel) ? "<!channel>: \n" : "";
-
+            
             using (var client = new HttpClient())
             {
                 var payload = new
@@ -54,10 +54,11 @@ namespace SlackLogger
                     channel = GetChannel(logLevel),
                     username = _options.UserName,
                     icon_emoji = icon,
-                    text = $"{notification}*{_options.ApplicationName}* {environmentName}",
+                    text = $"{notification}{applicationName} {environmentName}",
                     attachments = new[]
                     {
                         new
+                            
                         {
                             fallback = $"Error in {_options.ApplicationName}",
                             color = color,
