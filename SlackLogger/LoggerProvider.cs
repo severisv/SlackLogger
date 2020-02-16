@@ -16,6 +16,11 @@ namespace SlackLogger
         {
             _options = options.Value;
             _options.Merge(configuration.GetSection("Logging:Slack"));
+            
+            _options.ApplicationName = String.IsNullOrEmpty(_options.ApplicationName)
+                ? System.Reflection.Assembly.GetEntryAssembly()?.GetName()?.Name
+                : _options.ApplicationName;
+
             _options.ValidateWebookUrl();
 
             var filterSettings = filterOptions.Value;
