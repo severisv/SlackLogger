@@ -17,9 +17,22 @@ namespace SlackLogger
             _options = options.Value;
             _options.Merge(configuration.GetSection("Logging:Slack"));
             
-            _options.ApplicationName = String.IsNullOrEmpty(_options.ApplicationName)
+            _options.ApplicationName = string.IsNullOrEmpty(_options.ApplicationName)
                 ? System.Reflection.Assembly.GetEntryAssembly()?.GetName()?.Name
                 : _options.ApplicationName;
+
+
+            if (string.IsNullOrEmpty(_options.EnvironmentName))
+            {
+                try
+                {
+                    _options.EnvironmentName = Environment.GetEnvironmentVariable("ASPNETCORE_ENVIRONMENT");
+                }
+                catch (Exception)
+                {
+                    // If something wrong happens trying to get the default environment, we're better off continuing with it unset
+                }
+            }
 
             _options.ValidateWebookUrl();
 
