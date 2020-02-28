@@ -40,7 +40,7 @@ namespace SlackLogger
                     : string.Empty;
 
             var notification = ShouldNotify(logLevel) ? "<!channel>: \n" : "";
-
+            
             using (var client = new HttpClient())
             {
                 var payload = new
@@ -52,7 +52,6 @@ namespace SlackLogger
                     attachments = new[]
                     {
                         new
-
                         {
                             fallback = $"Error in {_options.ApplicationName}",
                             color = color,
