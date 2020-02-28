@@ -40,6 +40,10 @@ namespace SlackLogger
                 {
                     ApplicationName = configuration["ApplicationName"];
                 }
+                if (configuration["EnvironmentName"] != null)
+                {
+                    EnvironmentName = configuration["EnvironmentName"];
+                }
                 if (configuration["UserName"] != null)
                 {
                     UserName = configuration["UserName"];
