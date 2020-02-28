@@ -20,29 +20,23 @@ namespace SlackLogger
         }
 
 
-        public void Log(LogLevel logLevel, string typeName, string message, string environmentName, Exception exception = null)
+        public void Log(LogLevel logLevel, string typeName, string message, string environmentName,
+            Exception exception = null)
         {
             _ = Task.Run(() => PostAsync(typeName, message, exception, environmentName, logLevel));
         }
 
-
-        private async Task PostAsync(string typeName, string message, Exception exception, string environment, LogLevel logLevel)
+        private async Task PostAsync(string typeName, string message, Exception exception, string environment,
+            LogLevel logLevel)
         {
             var icon = GetIcon(logLevel);
             var color = GetColor(logLevel);
             var applicationName = string.IsNullOrEmpty(_options.ApplicationName) ? "" : $"*{_options.ApplicationName}*";
             var environmentName = string.IsNullOrEmpty(environment) ? "" : $"({environment})";
 
-            var stackTrace = exception?.ToString();
-
-            if (_options.SanitizeOutputFunction != null && exception != null)
-            {
-                stackTrace = _options.SanitizeOutputFunction(stackTrace);
-            }
-
-            var formattedStacktrace =
+            var stacktrace =
                 exception != null
-                    ? $"```\n{stackTrace.Truncate(1800)}```"
+                    ? $"```\n{Sanitize(exception.ToString()).Truncate(1800)}```"
                     : string.Empty;
 
             var notification = ShouldNotify(logLevel) ? "<!channel>: \n" : "";
@@ -58,7 +52,6 @@ namespace SlackLogger
                     attachments = new[]
                     {
                         new
-                            
                         {
                             fallback = $"Error in {_options.ApplicationName}",
                             color = color,
@@ -73,12 +66,12 @@ namespace SlackLogger
                                 new
                                 {
                                     title = $"{icon} [{logLevel}]",
-                                    value = $"{message.Sanitize(_options)}",
+                                    value = $"{Sanitize(message)}",
                                 },
                                 new
                                 {
                                     title = "",
-                                    value = formattedStacktrace,
+                                    value = stacktrace,
                                 }
                             }
                         }
@@ -153,21 +146,27 @@ namespace SlackLogger
         private IEnumerable<LogLevel> GetNotificationLogLevels()
         {
             var result = new List<LogLevel>();
-            for (int i = (int)_options.NotificationLevel; i < (int)LogLevel.None; i++)
+            for (int i = (int) _options.NotificationLevel; i < (int) LogLevel.None; i++)
             {
-                result.Add((LogLevel)i);
+                result.Add((LogLevel) i);
             }
+
             return result;
         }
-    }
 
-    internal static class StringExtensions
-    {
-        public static string Sanitize(this string input, SlackLoggerOptions options)
-            =>
-                options.SanitizeOutputFunction != null ?
-                    options.SanitizeOutputFunction(input) :
-                    input;
-
+        private string Sanitize(string message)
+        {
+            try
+            {
+                return
+                    _options.SanitizeOutputFunction != null ? _options.SanitizeOutputFunction(message) : message;
+            }
+            catch (Exception e)
+            {
+                return new Exception(@"An error occured while trying to sanitize the output. 
+This probably means there is something wrong in the configuration of SlackLogger (in SanitizeOutputFn). Original output is hidden.
+", e).ToString();
+            }
+        }
     }
 }
