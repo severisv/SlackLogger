@@ -12,13 +12,13 @@ namespace SlackLogger
 {
     internal class SlackService
     {
+        private static readonly HttpClient HttpClient = new HttpClient();
         private readonly SlackLoggerOptions _options;
 
         public SlackService(SlackLoggerOptions options)
         {
             _options = options;
         }
-
 
         public void Log(LogLevel logLevel, string typeName, string message, string environmentName,
             Exception exception = null)
@@ -40,50 +40,47 @@ namespace SlackLogger
                     : string.Empty;
 
             var notification = ShouldNotify(logLevel) ? "<!channel>: \n" : "";
-            
-            using (var client = new HttpClient())
+
+            var payload = new
             {
-                var payload = new
+                channel = GetChannel(logLevel),
+                username = _options.UserName,
+                icon_emoji = icon,
+                text = $"{notification}{applicationName} {environmentName}",
+                attachments = new[]
                 {
-                    channel = GetChannel(logLevel),
-                    username = _options.UserName,
-                    icon_emoji = icon,
-                    text = $"{notification}{applicationName} {environmentName}",
-                    attachments = new[]
+                    new
                     {
-                        new
+                        fallback = $"Error in {_options.ApplicationName}",
+                        color = color,
+                        mrkdwn_in = new[] {"fields"},
+                        fields = new[]
                         {
-                            fallback = $"Error in {_options.ApplicationName}",
-                            color = color,
-                            mrkdwn_in = new[] {"fields"},
-                            fields = new[]
+                            new
                             {
-                                new
-                                {
-                                    title = "",
-                                    value = $"`{typeName}`",
-                                },
-                                new
-                                {
-                                    title = $"{icon} [{logLevel}]",
-                                    value = $"{Sanitize(message)}",
-                                },
-                                new
-                                {
-                                    title = "",
-                                    value = stacktrace,
-                                }
+                                title = "",
+                                value = $"`{typeName}`",
+                            },
+                            new
+                            {
+                                title = $"{icon} [{logLevel}]",
+                                value = $"{Sanitize(message)}",
+                            },
+                            new
+                            {
+                                title = "",
+                                value = stacktrace,
                             }
                         }
                     }
-                };
+                }
+            };
 
-                var url = _options.WebhookUrl;
-                var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8,
-                    "application/json");
+            var url = _options.WebhookUrl;
+            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8,
+                "application/json");
 
-                await client.PostAsync(url, content).ConfigureAwait(false);
-            }
+            await HttpClient.PostAsync(url, content).ConfigureAwait(false);
         }
 
         private string GetChannel(LogLevel logLevel)
