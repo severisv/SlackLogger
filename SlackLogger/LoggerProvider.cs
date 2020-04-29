@@ -6,7 +6,7 @@ using Microsoft.Extensions.Options;
 
 namespace SlackLogger
 {
-    internal class LoggerProvider : ILoggerProvider
+    public class LoggerProvider : ILoggerProvider
     {
 
         private readonly SlackLoggerOptions _options;
