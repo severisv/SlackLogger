@@ -36,7 +36,7 @@ namespace SlackLogger
                     return;
                 }
 
-                var message = FormatLogMessage(state, exception, formatter);
+                var message = FormatLogMessage(state, formatter);
 
                 var slackService = new SlackService(_options);
                 slackService.Log(logLevel, _name, message, _environmentName, exception);
@@ -47,20 +47,13 @@ namespace SlackLogger
             }
         }
 
-        private static string FormatLogMessage<TState>(TState state, Exception exception,
+        private static string FormatLogMessage<TState>(TState state,
             Func<TState, Exception, string> formatter)
         {
             string message;
-            if (exception == null)
+            if (formatter != null)
             {
-                if (formatter != null)
-                {
-                    message = formatter(state, null);
-                }
-                else
-                {
-                    message = state.ToString();
-                }
+                message = formatter(state, null);
             }
             else
             {
