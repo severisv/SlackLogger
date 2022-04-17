@@ -32,6 +32,12 @@ namespace SlackLogger
             set => _notificationLevel = value;
         }
 
+        /// <summary>
+        /// If <see langword="true"/>, <see cref="LogLevel"/> will be forced to <see cref="LogLevel.None"/> given invalid options,
+        /// e.g. <see cref="WebhookUrl"/> is not set.
+        /// </summary>
+        public bool Optional { get; set; }
+
         public void Merge(IConfiguration configuration)
         {
             if (configuration != null)
@@ -112,6 +118,12 @@ namespace SlackLogger
         {
             if (string.IsNullOrWhiteSpace(WebhookUrl))
             {
+                if (Optional)
+                {
+                    LogLevel = LogLevel.None;
+                    return;
+                }
+
                 throw new ArgumentException("WebhookUrl must be set");
             }
             Uri uriResult;
