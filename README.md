@@ -1,4 +1,5 @@
 # SlackLogger
+
 A simple and configurable logger for .NET Core projects that logs to Slack.
 
 SlackLogger will post formatted log messages at the desired level to a specified channel or person.
@@ -9,11 +10,13 @@ SlackLogger will post formatted log messages at the desired level to a specified
 ![Example log message](/documentation/exceptionexample.png)
 
 ## Usage
-Works with .NET Core >= `2.0`. Reference package `SlackLogger` >= `2.0`. 
+
+Works with .NET Core >= `2.0`. Reference package `SlackLogger` >= `2.0`.
 
 To use with .NET Core 1.0 reference SlackLogger version < `2.0` ([docs here](https://github.com/severisv/SlackLogger/tree/f00cabfddaec673e35201f9ebeff6b5dd927972a))
 
 `Program.cs`
+
 ```cs
   public static IWebHost CreateDefaultBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
@@ -34,12 +37,13 @@ To use with .NET Core 1.0 reference SlackLogger version < `2.0` ([docs here](htt
 
 or in a console application:
 `Program.cs`
+
 ```cs
       IConfiguration configuration =
                 new ConfigurationBuilder()
                     .AddJsonFile($"{Directory.GetCurrentDirectory()}/appsettings.json", false, true)
                     .Build();
-            
+
       var serviceProvider = new ServiceCollection()
             .AddSingleton(configuration)
             .AddLogging(builder =>
@@ -51,8 +55,8 @@ or in a console application:
                     "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj";
             });
         }).BuildServiceProvider();
-    
-    
+
+
         var logger = serviceProvider.GetService<ILogger<Program>>();
 ```
 
@@ -75,8 +79,11 @@ logging.AddSlack(options =>
      options.SanitizeOutputFunction = output => Regex.Replace(output, "@[^\\.@-]", "");
      options.UserName = "SlackLogger";
 });
-            
+
 ```
+
+`WebhookUrl`
+Url of the Slack webhook. Required unless `IsOptional` is set to `true`.
 
 `Channel`
 Overrides the channel or person that is configured in the Slack webhook.
@@ -102,8 +109,11 @@ Can be used to modify the messages (including stack traces) before they are logg
 `UserName`
 Sets the username sent to Slack. Defaults to `SlackLogger`. Set it to null, if you want to use the default webhook username.
 
+`IsOptional`
+Makes the logger configuration optional, meaning that it will fail silently and just not log anything when a `WebhookUrl` is not present.
 
 ## Configure using ConfigurationProvider
+
 SlackLogger can be completely or partially configured using a configuration provider:
 
 ```cs
@@ -116,6 +126,7 @@ SlackLogger can be completely or partially configured using a configuration prov
 ```
 
 `appsettings.json`:
+
 ```json
 "Logging": {
     "Slack": {
@@ -129,6 +140,7 @@ SlackLogger can be completely or partially configured using a configuration prov
 If the same property is set both in code and in the configuration provider, the value from the configuration provider is used.
 
 ## Filtering namespaces
+
 The logger filters log statements from different part of the code using namespaces in the same way as the default loggers, if that section of the configuration is provided:
 
 ```cs
@@ -140,10 +152,11 @@ public IConfigurationRoot Configuration { get; set; }
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
                     logging.AddSlack();
-                })                
+                })
 ```
 
 `appsettings.json`:
+
 ```json
 "Logging": {
     "LogLevel": {

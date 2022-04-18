@@ -20,7 +20,7 @@ namespace SlackLogger
         public string EnvironmentName { get; set; }
         public Func<string, string> SanitizeOutputFunction { get; set; }
         private LogLevel? _logLevel;
-        public LogLevel LogLevel 
+        public LogLevel LogLevel
         {
             get => _logLevel ?? Microsoft.Extensions.Logging.LogLevel.Warning;
             set => _logLevel = value;
@@ -36,7 +36,7 @@ namespace SlackLogger
         /// If <see langword="true"/>, <see cref="LogLevel"/> will be forced to <see cref="LogLevel.None"/> given invalid options,
         /// e.g. <see cref="WebhookUrl"/> is not set.
         /// </summary>
-        public bool Optional { get; set; }
+        public bool IsOptional { get; set; }
 
         public void Merge(IConfiguration configuration)
         {
@@ -98,6 +98,10 @@ namespace SlackLogger
                 {
                     NotificationLevel = ParseLogLevel(configuration, "NotificationLevel");
                 }
+                if (configuration["IsOptional"] != null && bool.TryParse(configuration["IsOptional"], out var isOptional))
+                {
+                    IsOptional = isOptional;
+                }
             }
         }
 
@@ -118,7 +122,7 @@ namespace SlackLogger
         {
             if (string.IsNullOrWhiteSpace(WebhookUrl))
             {
-                if (Optional)
+                if (IsOptional)
                 {
                     LogLevel = LogLevel.None;
                     return;
