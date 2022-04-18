@@ -5,7 +5,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
+using System.Text.Json;
 using SlackLogger.Extensions;
 
 namespace SlackLogger
@@ -77,7 +77,7 @@ namespace SlackLogger
             };
 
             var url = _options.WebhookUrl;
-            var content = new StringContent(JsonConvert.SerializeObject(payload), Encoding.UTF8,
+            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8,
                 "application/json");
 
             await HttpClient.PostAsync(url, content).ConfigureAwait(false);
@@ -143,9 +143,9 @@ namespace SlackLogger
         private IEnumerable<LogLevel> GetNotificationLogLevels()
         {
             var result = new List<LogLevel>();
-            for (int i = (int) _options.NotificationLevel; i < (int) LogLevel.None; i++)
+            for (int i = (int)_options.NotificationLevel; i < (int)LogLevel.None; i++)
             {
-                result.Add((LogLevel) i);
+                result.Add((LogLevel)i);
             }
 
             return result;

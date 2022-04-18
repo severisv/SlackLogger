@@ -11,7 +11,9 @@ SlackLogger will post formatted log messages at the desired level to a specified
 
 ## Usage
 
-Works with .NET Core >= `2.0`. Reference package `SlackLogger` >= `2.0`.
+For .NET 6 reference package `SlackLogger` >= `4.0`.
+
+For .NET 2 to 5 Reference version `3` ([docs here](https://github.com/severisv/SlackLogger/tree/613ce47128f03c5cd0be129c65414475a8d85822))
 
 To use with .NET Core 1.0 reference SlackLogger version < `2.0` ([docs here](https://github.com/severisv/SlackLogger/tree/f00cabfddaec673e35201f9ebeff6b5dd927972a))
 

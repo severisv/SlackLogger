@@ -1,4 +1,6 @@
 ﻿
+using System;
+using System.Linq;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Logging;
@@ -17,14 +19,15 @@ namespace SlackLogger.Web._2
                 .ConfigureLogging((hostingContext, logging) =>
                 {
                     logging.AddConfiguration(hostingContext.Configuration.GetSection("Logging"));
-                    logging.AddConsole(options => options.IncludeScopes = true);
+                    logging.AddConsole();
                     logging.AddSlack(options =>
                     {
-                        options.WebhookUrl = "";
                         options.LogLevel = LogLevel.Information;
-                        options.ApplicationName = "Slacklogger";
+                        options.Channel = "#slacklogger";
+                        options.ApplicationName = "Hei";
                     });
-                   
+
+
                     logging.AddDebug();
                 })
                 .UseStartup<Startup>()

@@ -5,7 +5,7 @@ VisualStudioVersion = 15.0.26730.8
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackLogger", "SlackLogger\SlackLogger.csproj", "{02028BCB-5374-4A6C-A749-24887D9F5752}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackLogger.Web.2", "SlackLogger.Web.2\SlackLogger.Web.2.csproj", "{2C9570B4-D498-4108-B370-E253D089164B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SlackLogger.Web", "SlackLogger.Web\SlackLogger.Web.csproj", "{2C9570B4-D498-4108-B370-E253D089164B}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{26B0BE95-0937-440A-95C4-AA42E4FA97AC}"
 	ProjectSection(SolutionItems) = preProject
