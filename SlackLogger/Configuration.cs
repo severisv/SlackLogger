@@ -13,6 +13,13 @@ namespace SlackLogger
             return builder;
         }
 
+        public static ILoggingBuilder AddSlack(this ILoggingBuilder builder, bool optional)
+        {
+            return builder.AddSlack(s =>
+            {
+                s.Optional = optional;
+            });
+        }
 
         public static ILoggingBuilder AddSlack(this ILoggingBuilder builder, Action<SlackLoggerOptions> configure)
         {
