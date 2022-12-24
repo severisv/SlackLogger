@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFrameworks>net6.0;net7.0</TargetFrameworks>
     <Authors>Severin Sverdvik</Authors>
     <Description>A simple and configurable logger for ASP.NET Core projects that logs to Slack.
     SlackLogger will post formatted log messages at the desired level to a specified channel or person.
@@ -10,7 +10,7 @@
     <ProjectUrl>https://github.com/severisv/slacklogger</ProjectUrl>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.0.0" allowedVersions="[2.0,6]" />
-    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" allowedVersions="[2.0,6]" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Abstractions" Version="2.0.0" allowedVersions="[2.0,7]" />
+    <PackageReference Include="Microsoft.Extensions.Logging" Version="2.0.0" allowedVersions="[2.0,7]" />
   </ItemGroup>
 </Project>

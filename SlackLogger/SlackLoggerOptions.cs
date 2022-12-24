@@ -7,15 +7,8 @@ namespace SlackLogger
 {
     public class SlackLoggerOptions
     {
-        public string Channel { get; set; }
-        public string ChannelCritical { get; set; }
-        public string ChannelError { get; set; }
-        public string ChannelWarning { get; set; }
-        public string ChannelInformation { get; set; }
-        public string ChannelDebug { get; set; }
-        public string ChannelTrace { get; set; }
+        
         public string ApplicationName { get; set; }
-        public string UserName { get; set; } = "SlackLogger";
         public string WebhookUrl { get; set; }
         public string EnvironmentName { get; set; }
         public Func<string, string> SanitizeOutputFunction { get; set; }
@@ -37,6 +30,24 @@ namespace SlackLogger
         /// e.g. <see cref="WebhookUrl"/> is not set.
         /// </summary>
         public bool IsOptional { get; set; }
+
+        [Obsolete("Only supported for old Slack webhooks")]
+        public string UserName { get; set; } = "SlackLogger";
+        [Obsolete("Only supported for old Slack webhooks")]
+        public string Channel { get; set; }
+        [Obsolete("Only supported for old Slack webhooks")]
+        public string ChannelCritical { get; set; }
+        [Obsolete("Only supported for old Slack webhooks")]
+        public string ChannelError { get; set; }
+        [Obsolete("Only supported for old Slack webhooks")]
+        public string ChannelWarning { get; set; }
+        [Obsolete("Only supported for old Slack webhooks")]
+        public string ChannelInformation { get; set; }
+        [Obsolete("Only supported for old Slack webhooks")]
+        public string ChannelDebug { get; set; }
+        [Obsolete("Only supported for old Slack webhooks")]
+        public string ChannelTrace { get; set; }
+        
 
         public void Merge(IConfiguration configuration)
         {
