@@ -25,6 +25,7 @@ namespace SlackLogger.Web._2
                         options.LogLevel = LogLevel.Information;
                         options.Channel = "#slacklogger";
                         options.ApplicationName = "Hei";
+                        options.WebhookUrl = "";
                     });
 
 
