@@ -105,6 +105,9 @@ namespace SlackLogger
                 {
                     LogLevel = ParseLogLevel(configuration, "LogLevel");
                 }
+                if (configuration["LogLevel:Default"] != null){
+                        LogLevel = ParseLogLevel(configuration, "LogLevel:Default");
+                }
                 if (configuration["NotificationLevel"] != null)
                 {
                     NotificationLevel = ParseLogLevel(configuration, "NotificationLevel");

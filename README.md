@@ -178,6 +178,9 @@ public IConfigurationRoot Configuration { get; set; }
         "Microsoft": "Warning"
     },
     "Slack": {
+        "LogLevel": { 
+            "Default": "Warning" 
+        },
         "WebhookUrl": "https://hooks.slack.com/services/ABC123FGH321QWERTYUICAZzDJBG3sehHH7scclYdDxj"
     }
 },
