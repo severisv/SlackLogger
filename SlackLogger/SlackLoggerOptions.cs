@@ -13,9 +13,9 @@ namespace SlackLogger
         public string EnvironmentName { get; set; }
         public Func<string, string> SanitizeOutputFunction { get; set; }
         private LogLevel? _logLevel;
-        public LogLevel LogLevel
+        public LogLevel? LogLevel
         {
-            get => _logLevel ?? Microsoft.Extensions.Logging.LogLevel.Warning;
+            get => _logLevel;
             set => _logLevel = value;
         }
         private LogLevel? _notificationLevel;
@@ -106,7 +106,7 @@ namespace SlackLogger
                     LogLevel = ParseLogLevel(configuration, "LogLevel");
                 }
                 if (configuration["LogLevel:Default"] != null){
-                        LogLevel = ParseLogLevel(configuration, "LogLevel:Default");
+                    LogLevel = ParseLogLevel(configuration, "LogLevel:Default");
                 }
                 if (configuration["NotificationLevel"] != null)
                 {
@@ -138,7 +138,7 @@ namespace SlackLogger
             {
                 if (IsOptional)
                 {
-                    LogLevel = LogLevel.None;
+                    LogLevel = Microsoft.Extensions.Logging.LogLevel.None;
                     return;
                 }
 

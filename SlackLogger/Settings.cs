@@ -11,11 +11,19 @@ namespace SlackLogger
 
         public ScopeSettings(LoggerFilterOptions configuration)
         {
-            _configuration = configuration ?? new LoggerFilterOptions();
+            var config = new LoggerFilterOptions { MinLevel = configuration.MinLevel };
+            foreach (var rule in configuration.Rules.Where(r => r.ProviderName == LoggerProvider.ProviderAlias
+                                    || r.ProviderName == null)
+            )
+            {
+                config.Rules.Add(rule);
+            }
+            _configuration = config;
         }
 
 
-        public Func<string, LogLevel, bool> GetFilter(string name)
+
+        public Func<string, LogLevel, bool?> GetFilter(string name)
         {
             foreach (var prefix in GetKeyPrefixes(name))
             {
@@ -24,9 +32,10 @@ namespace SlackLogger
                 {
                     return (n, l) => l >= level;
                 }
-            }            
-            return (n, l) => true;
+            }
+            return (n, l) => null;
         }
+
 
         private IEnumerable<string> GetKeyPrefixes(string name)
         {
@@ -42,16 +51,9 @@ namespace SlackLogger
                 name = name.Substring(0, lastIndexOfDot);
             }
         }
-  
 
-        private bool TryGetSwitch(string name, out LogLevel level)
+        private bool TryGetSwitch(string nameSpace, out LogLevel level)
         {
-            if (name == "Default")
-            {
-                level = _configuration.Rules?.FirstOrDefault(r => r.CategoryName == null)?.LogLevel ?? LogLevel.Information;
-                return true;
-            }
-
             var switches = _configuration.Rules;
             if (!switches.Any())
             {
@@ -59,7 +61,8 @@ namespace SlackLogger
                 return false;
             }
 
-            var value = switches.FirstOrDefault(s => s.CategoryName == name)?.LogLevel;
+            var value = switches.FirstOrDefault(s => s.CategoryName == nameSpace && s.ProviderName == LoggerProvider.ProviderAlias)?.LogLevel;
+
             if (value == null)
             {
                 level = LogLevel.None;
@@ -67,8 +70,6 @@ namespace SlackLogger
             }
             level = value.Value;
             return true;
-            
-
         }
     }
 }
