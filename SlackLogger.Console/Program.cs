@@ -4,45 +4,32 @@ using System.Threading;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using SlackLogger;
 
-namespace SlackLogger.Console
-{
- 
-   public class Program
-   {
-
-       public static IConfiguration Configuration { get; } =
-
-           new ConfigurationBuilder()
+var Configuration = new ConfigurationBuilder()
                .AddJsonFile($"{Directory.GetCurrentDirectory()}/appsettings.json", false, true)
                .Build();
-            
-        public static void Main(string[] args)
-        {
-            var serviceProvider = new ServiceCollection()
-                .AddSingleton(Configuration)
-                .AddLogging(builder =>
-            {
-                builder.AddConfiguration(Configuration.GetSection("Logging"));
-                builder.AddSlack(options =>
-                {
-                    options.WebhookUrl =
-                        "";
-                    options.LogLevel = LogLevel.Information;
-                });
-                
-                
-            }).BuildServiceProvider();
 
 
-            var logger = serviceProvider.GetService<ILogger<Program>>();
-            logger.LogInformation("Example log message");
+var serviceProvider = new ServiceCollection()
+    .AddSingleton<IConfiguration>(Configuration)
+    .AddLogging(builder =>
+{
+    builder.AddConfiguration(Configuration.GetSection("Logging"));
+    builder.AddSlack(options =>
+    {
+        options.ApplicationName = "Application name";
+        options.WebhookUrl = "";
+        options.LogLevel = LogLevel.Information;
+    });
 
-            Thread.Sleep(1000);
 
-        }
-   
-    }
+}).BuildServiceProvider();
 
-}
+
+var logger = serviceProvider.GetService<ILogger<Program>>();
+logger.LogInformation("Example log message");
+
+Thread.Sleep(1000);
+
 
