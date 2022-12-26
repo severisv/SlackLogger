@@ -1,31 +1,30 @@
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using Microsoft.Extensions.Logging;
 
 namespace SlackLogger
 {
     public class Logger : ILogger<Type>
     {
+        private readonly LogLevel DefaultLogLevel = LogLevel.Warning;
+
         private readonly SlackLoggerOptions _options;
         private readonly string _environmentName;
-        private readonly IEnumerable<LogLevel> _enabledLogLevels;
         private readonly string _name;
-        private readonly Func<string, LogLevel, bool> _scopeFilter;
+        private readonly Func<string, LogLevel, bool?> _scopeFilter;
 
-        public Logger(string name, SlackLoggerOptions options, Func<string, LogLevel, bool> scopeFilter)
+
+        public Logger(string name, SlackLoggerOptions options, Func<string, LogLevel, bool?> scopeFilter)
         {
             _name = name;
             _environmentName = options.EnvironmentName ?? "";
             _options = options;
-            _enabledLogLevels = GetEnabledLogLevels(_options.LogLevel);
-            _scopeFilter = scopeFilter ?? ((category, logLevel) => true);
+            _scopeFilter = scopeFilter;
         }
 
         public void Log<TState>(
-            LogLevel logLevel, 
-            EventId eventId, 
-            TState state, 
+            LogLevel logLevel,
+            EventId eventId,
+            TState state,
             Exception exception,
             Func<TState, Exception, string> formatter)
         {
@@ -65,22 +64,14 @@ namespace SlackLogger
         public bool IsEnabled(LogLevel logLevel)
         {
             var passesFilter = _scopeFilter(_name, logLevel);
-            return passesFilter && _enabledLogLevels.Contains(logLevel);
+            return passesFilter != null ? 
+                    passesFilter.Value : 
+                    logLevel >= (_options.LogLevel ?? DefaultLogLevel);
         }
 
         public IDisposable BeginScope<TState>(TState state)
         {
             return NoopDisposable.Instance;
-        }
-
-        private IEnumerable<LogLevel> GetEnabledLogLevels(LogLevel logLevel)
-        {
-            var result = new List<LogLevel>();
-            for (int i = (int) logLevel; i < (int) LogLevel.None; i++)
-            {
-                result.Add((LogLevel) i);
-            }
-            return result;
         }
 
         private class NoopDisposable : IDisposable

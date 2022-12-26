@@ -1,14 +1,14 @@
 using System;
-using System.Linq;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 
 namespace SlackLogger
 {
+    [ProviderAlias(ProviderAlias)]
     public class LoggerProvider : ILoggerProvider
     {
-
+        public const string ProviderAlias = "Slack";
         private readonly SlackLoggerOptions _options;
         private readonly ScopeSettings _scopeSettings;
 
@@ -20,7 +20,6 @@ namespace SlackLogger
             _options.ApplicationName = string.IsNullOrEmpty(_options.ApplicationName)
                 ? System.Reflection.Assembly.GetEntryAssembly()?.GetName()?.Name
                 : _options.ApplicationName;
-
 
             if (string.IsNullOrEmpty(_options.EnvironmentName))
             {
@@ -37,16 +36,12 @@ namespace SlackLogger
             _options.ValidateWebookUrl();
 
             var filterSettings = filterOptions.Value;
-            if (!filterSettings.Rules.Any())
-            {
-                filterSettings.Rules.Add(new LoggerFilterRule(null, null, LogLevel.Information, null));
-            }
             _scopeSettings = new ScopeSettings(filterSettings);
         }
 
         public ILogger CreateLogger(string name)
         {
-            var scopeFilter = _scopeSettings?.GetFilter(name);
+            var scopeFilter = _scopeSettings.GetFilter(name);
             return new Logger(name, _options, scopeFilter);
         }
           
